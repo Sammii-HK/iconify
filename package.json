@@ -1,0 +1,38 @@
+{
+  "name": "iconify",
+  "version": "1.0.0",
+  "description": "Convert PNG/JPEG images to ICO files and PWA icon sets",
+  "type": "module",
+  "main": "dist/cli/index.js",
+  "bin": {
+    "iconify": "./dist/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start:cli": "node dist/cli/index.js",
+    "start:web": "node dist/web/server.js",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "icon",
+    "ico",
+    "pwa",
+    "favicon",
+    "converter",
+    "image"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.1.0",
+    "jszip": "^3.10.1",
+    "sharp": "^0.33.2",
+    "to-ico": "^1.1.7"
+  },
+  "devDependencies": {
+    "@types/jszip": "^3.4.1",
+    "@types/node": "^20.10.6",
+    "typescript": "^5.3.3"
+  }
+}
