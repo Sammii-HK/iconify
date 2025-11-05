@@ -126,8 +126,9 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
       }
 
       if (result.pwaPaths) {
+        const { sep } = await import('path');
         for (const pwaPath of result.pwaPaths) {
-          const fileName = pathJoin(pwaPath).split(pathJoin.sep).pop() || '';
+          const fileName = pwaPath.split(sep).pop() || '';
           const pwaBuffer = await readFile(pwaPath);
           files[fileName] = pwaBuffer.toString('base64');
         }

@@ -8,7 +8,8 @@
     "iconify": "./dist/cli/index.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy-static",
+    "copy-static": "node -e \"const fs=require('fs');const path=require('path');fs.mkdirSync('dist/web',{recursive:true});fs.copyFileSync('src/web/index.html','dist/web/index.html');fs.copyFileSync('src/web/styles.css','dist/web/styles.css');\"",
     "dev": "tsc --watch",
     "start": "node dist/web/server.js",
     "start:cli": "node dist/cli/index.js",
@@ -29,11 +30,12 @@
     "commander": "^11.1.0",
     "jszip": "^3.10.1",
     "sharp": "^0.33.2",
-    "to-ico": "^1.1.7"
+    "to-ico": "^1.1.5"
   },
   "devDependencies": {
     "@types/jszip": "^3.4.1",
     "@types/node": "^20.10.6",
+    "@vercel/node": "^3.0.7",
     "typescript": "^5.3.3"
   }
 }

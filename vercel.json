@@ -1,18 +1,14 @@
 {
-  "version": 2,
-  "builds": [
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/web",
+  "rewrites": [
     {
-      "src": "dist/web/server.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
+      "source": "/api/convert",
+      "destination": "/api/convert"
+    },
     {
-      "src": "/(.*)",
-      "dest": "dist/web/server.js"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
-  ],
-  "env": {
-    "PORT": "3000"
-  }
+  ]
 }
