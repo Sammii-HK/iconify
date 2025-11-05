@@ -3,15 +3,87 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iconify - Image to ICO/PWA Icon Converter</title>
+  
+  <!-- Primary Meta Tags -->
+  <title>Iconify - Free Image & Emoji to ICO/PWA Icon Converter</title>
+  <meta name="title" content="Iconify - Free Image & Emoji to ICO/PWA Icon Converter">
+  <meta name="description" content="Convert PNG/JPEG images or emojis to ICO files for favicons and generate PWA icon sets. Free, fast, and easy-to-use tool. Supports both CLI and web interface.">
+  <meta name="keywords" content="favicon converter, ico converter, pwa icons, emoji favicon, icon generator, favicon maker, pwa icon generator, image to ico, emoji to favicon">
+  <meta name="author" content="Iconify">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://iconify.dev/">
+  <meta property="og:title" content="Iconify - Free Image & Emoji to ICO/PWA Icon Converter">
+  <meta property="og:description" content="Convert PNG/JPEG images or emojis to ICO files for favicons and generate PWA icon sets. Free, fast, and easy-to-use tool.">
+  <meta property="og:image" content="https://iconify.dev/og-image.png">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://iconify.dev/">
+  <meta property="twitter:title" content="Iconify - Free Image & Emoji to ICO/PWA Icon Converter">
+  <meta property="twitter:description" content="Convert PNG/JPEG images or emojis to ICO files for favicons and generate PWA icon sets. Free, fast, and easy-to-use tool.">
+  <meta property="twitter:image" content="https://iconify.dev/og-image.png">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://iconify.dev/">
+  
+  <!-- Styles -->
   <link rel="stylesheet" href="/styles.css">
+  
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Iconify",
+    "description": "Convert PNG/JPEG images or emojis to ICO files for favicons and generate PWA icon sets",
+    "url": "https://iconify.dev/",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Convert images to ICO files",
+      "Generate PWA icon sets",
+      "Convert emojis to favicons",
+      "CLI tool support",
+      "Web interface"
+    ]
+  }
+  </script>
 </head>
 <body>
+  <!-- Google AdSense - Replace with your publisher ID -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_PUBLISHER_ID" crossorigin="anonymous"></script>
+  
   <div class="container">
     <header>
       <h1>Iconify</h1>
       <p>Convert PNG/JPEG images or emojis to ICO files and PWA icon sets</p>
     </header>
+
+    <!-- Top Ad Slot -->
+    <div class="ad-slot ad-slot-top">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-YOUR_PUBLISHER_ID"
+           data-ad-slot="YOUR_AD_SLOT_ID_TOP"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
 
     <main>
       <div class="input-mode-toggle">
@@ -52,35 +124,65 @@
         </div>
       </div>
 
-      <div class="options-section">
-        <h3>Output Options</h3>
-        
-        <div class="option-group">
-          <label>Format:</label>
-          <select id="formatSelect">
-            <option value="both">Both (ICO + PWA)</option>
-            <option value="ico">ICO only</option>
-            <option value="pwa">PWA icons only</option>
-          </select>
+      <div class="main-content-wrapper">
+        <div class="main-content">
+          <div class="options-section">
+            <h3>Output Options</h3>
+            
+            <div class="option-group">
+              <label>Format:</label>
+              <select id="formatSelect">
+                <option value="both">Both (ICO + PWA)</option>
+                <option value="ico">ICO only</option>
+                <option value="pwa">PWA icons only</option>
+              </select>
+            </div>
+
+            <div class="option-group" id="icoSizeGroup">
+              <label>ICO Sizes (comma-separated):</label>
+              <input type="text" id="icoSizeInput" value="16,32,48" placeholder="16,32,48">
+            </div>
+
+            <button id="convertButton" class="convert-button" disabled>Convert</button>
+          </div>
+
+          <div class="result-section" id="resultSection" style="display: none;">
+            <h3>Conversion Complete</h3>
+            <div id="resultFiles"></div>
+            <button id="downloadZipButton" class="download-button">Download All as ZIP</button>
+            <div id="individualDownloads"></div>
+          </div>
+
+          <!-- Bottom Ad Slot -->
+          <div class="ad-slot ad-slot-bottom">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-YOUR_PUBLISHER_ID"
+                 data-ad-slot="YOUR_AD_SLOT_ID_BOTTOM"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+          </div>
+
+          <div class="error-section" id="errorSection" style="display: none;">
+            <p class="error-message" id="errorMessage"></p>
+          </div>
         </div>
 
-        <div class="option-group" id="icoSizeGroup">
-          <label>ICO Sizes (comma-separated):</label>
-          <input type="text" id="icoSizeInput" value="16,32,48" placeholder="16,32,48">
+        <!-- Sidebar Ad Slot (Desktop) -->
+        <div class="ad-slot ad-slot-sidebar">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-YOUR_PUBLISHER_ID"
+               data-ad-slot="YOUR_AD_SLOT_ID_SIDEBAR"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
         </div>
-
-        <button id="convertButton" class="convert-button" disabled>Convert</button>
-      </div>
-
-      <div class="result-section" id="resultSection" style="display: none;">
-        <h3>Conversion Complete</h3>
-        <div id="resultFiles"></div>
-        <button id="downloadZipButton" class="download-button">Download All as ZIP</button>
-        <div id="individualDownloads"></div>
-      </div>
-
-      <div class="error-section" id="errorSection" style="display: none;">
-        <p class="error-message" id="errorMessage"></p>
       </div>
     </main>
   </div>

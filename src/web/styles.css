@@ -345,3 +345,56 @@ main {
   margin-top: 1rem;
 }
 
+/* Ad Slot Styles */
+.ad-slot {
+  margin: 1.5rem 0;
+  text-align: center;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ad-slot-top {
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.ad-slot-bottom {
+  margin-top: 2rem;
+  margin-bottom: 0;
+}
+
+.ad-slot-sidebar {
+  display: none;
+}
+
+/* Show sidebar ad on larger screens */
+@media (min-width: 1200px) {
+  .main-content-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+  }
+  
+  .ad-slot-sidebar {
+    display: block;
+    position: sticky;
+    top: 2rem;
+    height: fit-content;
+    margin: 0;
+  }
+  
+  .ad-slot-sidebar ins {
+    display: block;
+    width: 300px;
+  }
+}
+
+/* Hide ads on very small screens */
+@media (max-width: 480px) {
+  .ad-slot {
+    display: none;
+  }
+}
+
