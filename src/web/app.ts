@@ -13,7 +13,56 @@ const individualDownloads = document.getElementById('individualDownloads')!;
 const errorSection = document.getElementById('errorSection')!;
 const errorMessage = document.getElementById('errorMessage')!;
 
+// Emoji mode elements
+const imageModeButton = document.getElementById('imageModeButton')!;
+const emojiModeButton = document.getElementById('emojiModeButton')!;
+const imageSection = document.getElementById('imageSection')!;
+const emojiSection = document.getElementById('emojiSection')!;
+const emojiInput = document.getElementById('emojiInput') as HTMLInputElement;
+const emojiPreviewContainer = document.getElementById('emojiPreviewContainer')!;
+const emojiPreview = document.getElementById('emojiPreview')!;
+
 let currentImageFile: File | null = null;
+let currentMode: 'image' | 'emoji' = 'image';
+
+// Mode toggle
+imageModeButton.addEventListener('click', () => switchMode('image'));
+emojiModeButton.addEventListener('click', () => switchMode('emoji'));
+
+function switchMode(mode: 'image' | 'emoji') {
+  currentMode = mode;
+  
+  if (mode === 'image') {
+    imageModeButton.classList.add('active');
+    emojiModeButton.classList.remove('active');
+    imageSection.style.display = 'block';
+    emojiSection.style.display = 'none';
+    convertButton.disabled = !currentImageFile;
+  } else {
+    emojiModeButton.classList.add('active');
+    imageModeButton.classList.remove('active');
+    imageSection.style.display = 'none';
+    emojiSection.style.display = 'block';
+    convertButton.disabled = !emojiInput.value.trim();
+  }
+  
+  hideResult();
+  hideError();
+}
+
+// Emoji input handling
+emojiInput.addEventListener('input', (e) => {
+  const emoji = (e.target as HTMLInputElement).value.trim();
+  if (emoji) {
+    emojiPreview.textContent = emoji;
+    emojiPreviewContainer.style.display = 'block';
+    convertButton.disabled = false;
+    hideError();
+  } else {
+    emojiPreviewContainer.style.display = 'none';
+    convertButton.disabled = true;
+  }
+});
 
 // Show/hide ICO size input based on format
 formatSelect.addEventListener('change', () => {
@@ -75,7 +124,8 @@ function handleFileSelect(file: File) {
 }
 
 async function convertImage() {
-  if (!currentImageFile) return;
+  if (currentMode === 'image' && !currentImageFile) return;
+  if (currentMode === 'emoji' && !emojiInput.value.trim()) return;
 
   convertButton.disabled = true;
   convertButton.textContent = 'Converting...';
@@ -83,31 +133,43 @@ async function convertImage() {
   hideError();
 
   try {
-    // Read file as base64
-    const reader = new FileReader();
-    const imageData = await new Promise<string>((resolve, reject) => {
-      reader.onload = (e) => resolve(e.target?.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(currentImageFile!);
-    });
-
-    // Prepare request
     const format = formatSelect.value;
     const icoSizes = icoSizeInput.value
       .split(',')
       .map(s => parseInt(s.trim(), 10))
       .filter(s => !isNaN(s) && s > 0);
 
+    let requestBody: any;
+
+    if (currentMode === 'emoji') {
+      // Emoji conversion
+      requestBody = {
+        emoji: emojiInput.value.trim(),
+        format,
+        icoSizes: icoSizes.length > 0 ? icoSizes : [16, 32, 48],
+      };
+    } else {
+      // Image conversion
+      const reader = new FileReader();
+      const imageData = await new Promise<string>((resolve, reject) => {
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(currentImageFile!);
+      });
+
+      requestBody = {
+        imageData,
+        format,
+        icoSizes: icoSizes.length > 0 ? icoSizes : [16, 32, 48],
+      };
+    }
+
     const response = await fetch('/api/convert', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        imageData,
-        format,
-        icoSizes: icoSizes.length > 0 ? icoSizes : [16, 32, 48],
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {

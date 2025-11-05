@@ -2,7 +2,7 @@ import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { readFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { convertImage } from '../core/converter.js';
+import { convertImage, convertEmoji } from '../core/converter.js';
 import type { OutputFormat } from '../core/types.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -64,33 +64,51 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
       }
       const body = JSON.parse(Buffer.concat(chunks).toString());
 
-      const { imageData, format, icoSizes } = body;
+      const { imageData, emoji, format, icoSizes } = body;
 
-      if (!imageData || !format) {
+      if (!format) {
         res.writeHead(400);
-        res.end(JSON.stringify({ error: 'Missing required fields: imageData, format' }));
+        res.end(JSON.stringify({ error: 'Missing required field: format' }));
         return;
       }
 
-      // Decode base64 image
-      const imageBuffer = Buffer.from(imageData.split(',')[1] || imageData, 'base64');
-      
-      // Create temp file
-      const { writeFile, mkdtemp, readdir, readFile, rm } = await import('fs/promises');
+      // Create temp directory
+      const { writeFile, mkdtemp, readFile, rm } = await import('fs/promises');
       const { join: pathJoin } = await import('path');
       const { tmpdir } = await import('os');
       
       const tempDir = await mkdtemp(pathJoin(tmpdir(), 'iconify-'));
-      const tempInput = pathJoin(tempDir, 'input.png');
-      
-      await writeFile(tempInput, imageBuffer);
+      let result;
 
-      // Perform conversion
-      const result = await convertImage(tempInput, {
-        outputFormat: format as OutputFormat,
-        outputDir: tempDir,
-        icoSizes: icoSizes || [16, 32, 48],
-      });
+      if (emoji) {
+        // Handle emoji conversion
+        result = await convertEmoji(emoji, {
+          outputFormat: format as OutputFormat,
+          outputDir: tempDir,
+          icoSizes: icoSizes || [16, 32, 48],
+        });
+      } else {
+        // Handle image conversion
+        if (!imageData) {
+          await rm(tempDir, { recursive: true, force: true });
+          res.writeHead(400);
+          res.end(JSON.stringify({ error: 'Missing required field: imageData or emoji' }));
+          return;
+        }
+
+        // Decode base64 image
+        const imageBuffer = Buffer.from(imageData.split(',')[1] || imageData, 'base64');
+        const tempInput = pathJoin(tempDir, 'input.png');
+        
+        await writeFile(tempInput, imageBuffer);
+
+        // Perform conversion
+        result = await convertImage(tempInput, {
+          outputFormat: format as OutputFormat,
+          outputDir: tempDir,
+          icoSizes: icoSizes || [16, 32, 48],
+        });
+      }
 
       if (!result.success) {
         await rm(tempDir, { recursive: true, force: true });

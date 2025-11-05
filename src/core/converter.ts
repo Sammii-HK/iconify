@@ -81,6 +81,59 @@ async function generatePWAIcons(
 }
 
 /**
+ * Renders an emoji to a PNG image
+ */
+async function renderEmojiToImage(
+  emoji: string,
+  outputPath: string,
+  size: number = 512
+): Promise<void> {
+  // Create SVG with emoji centered
+  const svg = `
+    <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="${size}" height="${size}" fill="transparent"/>
+      <text x="50%" y="50%" font-size="${size * 0.7}" text-anchor="middle" dominant-baseline="central" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif">${emoji}</text>
+    </svg>
+  `;
+
+  // Convert SVG to PNG using Sharp
+  await sharp(Buffer.from(svg))
+    .resize(size, size)
+    .png()
+    .toFile(outputPath);
+}
+
+/**
+ * Converts an emoji string to favicon/PWA icons
+ */
+export async function convertEmoji(
+  emoji: string,
+  options: ConversionOptions
+): Promise<ConversionResult> {
+  try {
+    // Validate emoji (basic check - non-empty string)
+    if (!emoji || emoji.trim().length === 0) {
+      throw new Error('Emoji cannot be empty');
+    }
+
+    // Ensure output directory exists
+    await fs.mkdir(options.outputDir, { recursive: true });
+
+    // Render emoji to temporary PNG file
+    const tempEmojiPath = join(options.outputDir, 'emoji-temp.png');
+    await renderEmojiToImage(emoji.trim(), tempEmojiPath, 512);
+
+    // Use existing conversion pipeline
+    return await convertImage(tempEmojiPath, options);
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error)
+    };
+  }
+}
+
+/**
  * Main conversion function
  */
 export async function convertImage(
