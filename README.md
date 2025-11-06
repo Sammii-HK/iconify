@@ -61,7 +61,7 @@ npm run start:cli "🚀" --emoji --format pwa --output-dir ./pwa-icons
 
 ### Web App
 
-**Live Version:** [https://iconify.dev](https://iconify.dev)
+**Live Version:** [https://iconify-alpha.vercel.app](https://iconify-alpha.vercel.app)
 
 Or run locally:
 
@@ -82,18 +82,18 @@ Then open your browser to `http://localhost:3000`
 
 ### API
 
-**Live API:** `https://iconify.dev/api/convert`
+**Live API:** `https://iconify-alpha.vercel.app/api/convert`
 
 #### Quick Start
 
 **Convert Emoji (GET - Direct Download):**
 ```bash
-curl https://iconify.dev/api/favicon?emoji=⭐ -o favicon.ico
+curl https://iconify-alpha.vercel.app/api/favicon?emoji=⭐ -o favicon.ico
 ```
 
 **Convert Image/Emoji (POST - JSON Response):**
 ```bash
-curl -X POST https://iconify.dev/api/convert \
+curl -X POST https://iconify-alpha.vercel.app/api/convert \
   -H "Content-Type: application/json" \
   -d '{"emoji": "⭐", "format": "ico", "icoSizes": [16, 32, 48]}'
 ```

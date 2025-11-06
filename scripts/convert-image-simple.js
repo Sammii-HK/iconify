@@ -28,11 +28,27 @@ let emoji = null;
 let format = 'both';
 let icoSizes = [16, 32, 48];
 let outputDir = './public';
-const apiUrl = process.env.ICONIFY_API_URL || 'https://iconify.dev/api/convert';
+const apiUrl = process.env.ICONIFY_API_URL || 'https://iconify-alpha.vercel.app/api/convert';
 
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--emoji' && args[i + 1]) {
-    emoji = args[i + 1];
+    let emojiValue = args[i + 1];
+    // Support Unicode code point format: U+1F600 or 1F600 or <0001F600>
+    if (emojiValue.startsWith('U+') || emojiValue.startsWith('u+')) {
+      const codePoint = parseInt(emojiValue.substring(2), 16);
+      emoji = String.fromCodePoint(codePoint);
+    } else if (emojiValue.startsWith('<') && emojiValue.endsWith('>')) {
+      // Format: <0001F600> - remove < > and parse hex
+      const codePoint = parseInt(emojiValue.slice(1, -1), 16);
+      emoji = String.fromCodePoint(codePoint);
+    } else if (/^[0-9A-Fa-f]+$/.test(emojiValue)) {
+      // Just hex digits - treat as code point
+      const codePoint = parseInt(emojiValue, 16);
+      emoji = String.fromCodePoint(codePoint);
+    } else {
+      // Regular emoji character
+      emoji = emojiValue;
+    }
     i++;
   } else if (args[i] === '--format' && args[i + 1]) {
     format = args[i + 1];
@@ -60,6 +76,8 @@ if (!imageFile && !emoji) {
   console.error('  node scripts/convert-image-simple.js logo.png');
   console.error('  node scripts/convert-image-simple.js --emoji ⭐');
   console.error('  node scripts/convert-image-simple.js --emoji 🚀 --format ico');
+  console.error('  node scripts/convert-image-simple.js --emoji U+1F600 --format ico');
+  console.error('  node scripts/convert-image-simple.js --emoji 1fab4 --format ico');
   process.exit(1);
 }
 
@@ -94,12 +112,15 @@ async function convertImage() {
     
     console.log(`Sending to: ${apiUrl}`);
     
+    // Ensure emoji is properly encoded in JSON (JSON.stringify handles Unicode correctly)
+    const jsonBody = JSON.stringify(requestBody);
+    
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
       },
-      body: JSON.stringify(requestBody),
+      body: jsonBody,
     });
     
     if (!response.ok) {

@@ -8,5 +8,5 @@ Disallow: /api/
 Allow: /
 
 # Sitemap location
-Sitemap: https://iconify.dev/sitemap.xml
+Sitemap: https://iconify-alpha.vercel.app/sitemap.xml
 

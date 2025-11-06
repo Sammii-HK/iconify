@@ -50,7 +50,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (!result.success || !result.icoPath) {
       await rm(tempDir, { recursive: true, force: true });
-      res.status(500).json({ error: result.error || 'Failed to generate favicon' });
+      // Return error as JSON even though we're supposed to return ICO
+      // This helps with debugging
+      res.status(500).json({ 
+        error: result.error || 'Failed to generate favicon',
+        hint: 'Make sure you\'re using a valid emoji character (e.g., ⭐, 🚀, 😀), not a code point string'
+      });
       return;
     }
 

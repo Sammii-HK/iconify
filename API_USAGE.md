@@ -4,7 +4,7 @@ The Iconify API allows you to convert images or emojis to ICO files and PWA icon
 
 ## API Endpoint
 
-**Live URL:** `https://iconify.dev/api/convert`
+**Live URL:** `https://iconify-alpha.vercel.app/api/convert`
 
 **Method:** `POST`
 
@@ -69,7 +69,7 @@ The response contains base64-encoded file data. Decode it to get the binary file
 IMAGE_BASE64=$(base64 -i logo.png)
 
 # Send to API
-curl -X POST https://iconify.dev/api/convert \
+curl -X POST https://iconify-alpha.vercel.app/api/convert \
   -H "Content-Type: application/json" \
   -d "{
     \"imageData\": \"data:image/png;base64,$IMAGE_BASE64\",
@@ -81,7 +81,7 @@ curl -X POST https://iconify.dev/api/convert \
 ### cURL - Convert Emoji
 
 ```bash
-curl -X POST https://iconify.dev/api/convert \
+curl -X POST https://iconify-alpha.vercel.app/api/convert \
   -H "Content-Type: application/json" \
   -d '{
     "emoji": "⭐",
@@ -104,7 +104,7 @@ async function convertImage(imageFile) {
   const imageData = `data:${mimeType};base64,${base64Data}`;
   
   // Send to API
-  const response = await fetch('https://iconify.dev/api/convert', {
+  const response = await fetch('https://iconify-alpha.vercel.app/api/convert', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ async function convertImage(imageFile) {
 
 // Convert an emoji
 async function convertEmoji(emoji) {
-  const response = await fetch('https://iconify.dev/api/convert', {
+  const response = await fetch('https://iconify-alpha.vercel.app/api/convert', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -204,7 +204,7 @@ const reader = new FileReader();
 reader.onload = async (e) => {
   const imageData = e.target.result; // Already in data:image/png;base64,... format
   
-  const response = await fetch('https://iconify.dev/api/convert', {
+  const response = await fetch('https://iconify-alpha.vercel.app/api/convert', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -116,7 +116,7 @@ async function renderEmojiToImage(
     const svgText = await new Promise<string>((resolve, reject) => {
       const req = client.get(twemojiUrl, (res) => {
         if (res.statusCode !== 200) {
-          reject(new Error(`Failed to fetch emoji: ${res.statusCode}`));
+          reject(new Error(`Failed to fetch emoji from Twemoji CDN: HTTP ${res.statusCode}. The emoji "${emoji}" may not be supported.`));
           return;
         }
         
@@ -125,14 +125,25 @@ async function renderEmojiToImage(
           data += chunk.toString();
         });
         res.on('end', () => {
+          if (!data || data.trim().length === 0) {
+            reject(new Error(`Empty response from Twemoji CDN for emoji "${emoji}"`));
+            return;
+          }
+          // Validate it's actually SVG
+          if (!data.includes('<svg') && !data.includes('<?xml')) {
+            reject(new Error(`Invalid response from Twemoji CDN for emoji "${emoji}"`));
+            return;
+          }
           resolve(data);
         });
       });
       
-      req.on('error', reject);
+      req.on('error', (err) => {
+        reject(new Error(`Network error fetching emoji "${emoji}": ${err.message}`));
+      });
       req.setTimeout(5000, () => {
         req.destroy();
-        reject(new Error('Request timeout'));
+        reject(new Error(`Request timeout fetching emoji "${emoji}"`));
       });
     });
     
