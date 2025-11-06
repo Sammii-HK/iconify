@@ -10,3 +10,4 @@ api/*.js.map
 api/*.d.ts
 api/*.d.ts.map
 test-output/
+public/emoji-temp.png
