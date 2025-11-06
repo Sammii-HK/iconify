@@ -15,7 +15,7 @@
       "destination": "/api/og-image"
     },
     {
-      "source": "/((?!favicon\\.ico|robots\\.txt|sitemap\\.xml|styles\\.css|app\\.js).*)",
+      "source": "/((?!favicon\\.ico|robots\\.txt|sitemap\\.xml|styles\\.css|app\\.js|.*\\.ico|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.svg|.*\\.css|.*\\.js).*)",
       "destination": "/index.html"
     }
   ],

@@ -1,8 +1,9 @@
-// @ts-nocheck - @vercel/og has its own JSX runtime, doesn't need React
+/* @ts-nocheck */
+// @vercel/og has its own JSX runtime, doesn't need React
 import { ImageResponse } from '@vercel/og';
 
 export const config = {
-  runtime: 'nodejs',
+  runtime: 'edge',
 };
 
 export default async function handler(request: Request) {
