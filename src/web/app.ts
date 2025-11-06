@@ -305,31 +305,27 @@ downloadZipButton.addEventListener('click', async () => {
     const zip = new JSZip();
 
     for (const file of fileList) {
-      // Decode base64 to binary
-      const binaryString = atob(file.data);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
+      // Clean base64 string (remove data URI prefix if present)
+      let base64Data = file.data;
+      if (base64Data.includes(',')) {
+        base64Data = base64Data.split(',')[1];
       }
       
-      // Determine MIME type for proper encoding
-      let mimeType = 'application/octet-stream';
-      const extension = file.name.toLowerCase().split('.').pop();
-      switch (extension) {
-        case 'ico':
-          mimeType = 'image/x-icon';
-          break;
-        case 'png':
-          mimeType = 'image/png';
-          break;
-        case 'jpg':
-        case 'jpeg':
-          mimeType = 'image/jpeg';
-          break;
+      // Decode base64 to binary properly
+      try {
+        const binaryString = atob(base64Data);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        
+        // Add file to ZIP as binary
+        zip.file(file.name, bytes);
+      } catch (e) {
+        console.error(`Error processing ${file.name}:`, e);
+        // Fallback: try adding as base64 string
+        zip.file(file.name, base64Data, { base64: true });
       }
-      
-      // Add file to ZIP with proper MIME type
-      zip.file(file.name, bytes, { binary: true });
     }
 
     const zipBlob = await zip.generateAsync({ type: 'blob' });
