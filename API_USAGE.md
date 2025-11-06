@@ -60,6 +60,39 @@ The Iconify API allows you to convert images or emojis to ICO files and PWA icon
 
 The response contains base64-encoded file data. Decode it to get the binary file.
 
+## Quick Decode Examples
+
+**JavaScript (Node.js):**
+```javascript
+const { files } = await response.json();
+const buffer = Buffer.from(files['favicon.ico'], 'base64');
+fs.writeFileSync('favicon.ico', buffer);
+```
+
+**JavaScript (Browser):**
+```javascript
+const { files } = await response.json();
+const blob = await fetch(`data:image/x-icon;base64,${files['favicon.ico']}`).then(r => r.blob());
+const url = URL.createObjectURL(blob);
+// Download or use url
+```
+
+**Python:**
+```python
+import base64
+ico_binary = base64.b64decode(data['files']['favicon.ico'])
+with open('favicon.ico', 'wb') as f:
+    f.write(ico_binary)
+```
+
+**cURL (one-liner with Node.js):**
+```bash
+curl -X POST https://iconify-alpha.vercel.app/api/convert \
+  -H "Content-Type: application/json" \
+  -d '{"emoji": "⭐", "format": "ico"}' \
+  | node -e "const d=require('fs').readFileSync(0,'utf8'); const j=JSON.parse(d); require('fs').writeFileSync('favicon.ico', Buffer.from(j.files['favicon.ico'], 'base64'));"
+```
+
 ## Usage Examples
 
 ### cURL - Convert Image

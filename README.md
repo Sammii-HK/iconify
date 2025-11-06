@@ -126,6 +126,13 @@ curl -X POST https://iconify-alpha.vercel.app/api/convert \
 }
 ```
 
+**Note:** Files are base64-encoded. Decode them to get binary files:
+- **JavaScript:** `Buffer.from(base64, 'base64')`
+- **Python:** `base64.b64decode(base64)`
+- **cURL:** Use `base64 -d` or see `API_USAGE.md` for examples
+
+**Tip:** For direct binary download (no decoding), use the GET endpoint: `/api/favicon?emoji=⭐`
+
 #### Using the Scripts
 
 ```bash
