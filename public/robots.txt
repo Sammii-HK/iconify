@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Disallow API endpoints from being indexed
+Disallow: /api/
+
+# Allow all other pages
+Allow: /
+
+# Sitemap location
+Sitemap: https://iconify.dev/sitemap.xml
+

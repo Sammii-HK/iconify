@@ -5,7 +5,7 @@ Convert PNG/JPEG images or emojis to ICO files for favicons and generate PWA ico
 ## Features
 
 - **ICO Generation**: Create ICO files with configurable sizes for favicons
-- **PWA Icon Sets**: Generate all standard PWA icon sizes (16x16, 32x32, 48x48, 64x64, 128x128, 192x192, 512x512)
+- **PWA Icon Sets**: Generate all standard PWA icon sizes as PNG files (16x16, 32x32, 48x48, 64x64, 128x128, 192x192, 512x512)
 - **Emoji Support**: Convert emojis directly to favicons and PWA icons
 - **Multiple Formats**: Support for PNG and JPEG input images
 - **CLI Tool**: Fast command-line interface for batch processing

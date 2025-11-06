@@ -19,7 +19,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { imageData, emoji, format, icoSizes } = req.body;
+    // Parse body if it's a string
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        res.status(400).json({ error: 'Invalid JSON in request body' });
+        return;
+      }
+    }
+
+    const { imageData, emoji, format, icoSizes } = body;
 
     if (!format) {
       res.status(400).json({ error: 'Missing required field: format' });
@@ -89,10 +100,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Cleanup
     await rm(tempDir, { recursive: true, force: true });
 
+    // Set proper content type header
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.status(200).json({ files });
   } catch (error) {
+    console.error('Conversion error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     res.status(500).json({ 
-      error: error instanceof Error ? error.message : String(error) 
+      error: errorMessage,
+      details: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.stack : String(error)) : undefined
     });
   }
 }

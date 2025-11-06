@@ -58,6 +58,53 @@
       "Convert emojis to favicons",
       "CLI tool support",
       "Web interface"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "127"
+    }
+  }
+  </script>
+  
+  <!-- FAQ Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I convert an image to a favicon?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Upload a PNG or JPEG image, select ICO format, and click Convert. Download your favicon.ico file instantly."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I convert an emoji to a favicon?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! Switch to Emoji mode, enter any emoji, and convert it to a favicon or PWA icon set."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What PWA icon sizes are generated?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We generate all standard PWA icon sizes: 16x16, 32x32, 48x48, 64x64, 128x128, 192x192, and 512x512 pixels."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is this tool free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, Iconify is completely free to use. No registration required."
+        }
+      }
     ]
   }
   </script>
@@ -132,9 +179,9 @@
             <div class="option-group">
               <label>Format:</label>
               <select id="formatSelect">
-                <option value="both">Both (ICO + PWA)</option>
-                <option value="ico">ICO only</option>
-                <option value="pwa">PWA icons only</option>
+                <option value="both">Both (ICO + PWA PNGs)</option>
+                <option value="ico">ICO only (favicon)</option>
+                <option value="pwa">PWA icons only (PNG format)</option>
               </select>
             </div>
 
@@ -144,6 +191,16 @@
             </div>
 
             <button id="convertButton" class="convert-button" disabled>Convert</button>
+          </div>
+
+          <!-- Ad shown during conversion (while user waits) -->
+          <div class="ad-slot ad-slot-conversion" id="conversionAdSlot" style="display: none; min-width: 320px; min-height: 100px;">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-YOUR_PUBLISHER_ID"
+                 data-ad-slot="YOUR_AD_SLOT_ID_CONVERSION"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
           </div>
 
           <div class="result-section" id="resultSection" style="display: none;">

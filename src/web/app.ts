@@ -132,6 +132,9 @@ async function convertImage() {
   hideResult();
   hideError();
 
+  // Show ad while converting (user is engaged and waiting)
+  showConversionAd();
+
   try {
     const format = formatSelect.value;
     const icoSizes = icoSizeInput.value
@@ -173,11 +176,25 @@ async function convertImage() {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Conversion failed');
+      let errorMessage = 'Conversion failed';
+      try {
+        const error = await response.json();
+        errorMessage = error.error || errorMessage;
+      } catch (e) {
+        // If response is not JSON, get text
+        const text = await response.text();
+        errorMessage = text || errorMessage;
+      }
+      throw new Error(errorMessage);
     }
 
-    const result = await response.json();
+    let result;
+    try {
+      result = await response.json();
+    } catch (e) {
+      const text = await response.text();
+      throw new Error(`Invalid response from server: ${text.substring(0, 100)}`);
+    }
 
     // Display results
     displayResults(result.files);
@@ -185,6 +202,8 @@ async function convertImage() {
     showError(error instanceof Error ? error.message : 'An error occurred during conversion.');
     convertButton.disabled = false;
     convertButton.textContent = 'Convert';
+    // Hide ad on error
+    hideConversionAd();
   }
 }
 
@@ -205,9 +224,27 @@ function displayResults(files: Record<string, string>) {
     `;
     resultFiles.appendChild(fileItem);
 
-    // Individual download link
+    // Determine MIME type based on file extension
+    let mimeType = 'application/octet-stream';
+    const extension = fileName.toLowerCase().split('.').pop();
+    switch (extension) {
+      case 'ico':
+        mimeType = 'image/x-icon';
+        break;
+      case 'png':
+        mimeType = 'image/png';
+        break;
+      case 'jpg':
+      case 'jpeg':
+        mimeType = 'image/jpeg';
+        break;
+      default:
+        mimeType = 'application/octet-stream';
+    }
+
+    // Individual download link with proper MIME type
     const link = document.createElement('a');
-    link.href = `data:application/octet-stream;base64,${base64Data}`;
+    link.href = `data:${mimeType};base64,${base64Data}`;
     link.download = fileName;
     link.className = 'download-link';
     link.textContent = `Download ${fileName}`;
@@ -220,6 +257,39 @@ function displayResults(files: Record<string, string>) {
   resultSection.style.display = 'block';
   convertButton.disabled = false;
   convertButton.textContent = 'Convert';
+  
+  // Ad is already showing from when conversion started
+}
+
+function showConversionAd() {
+  const conversionAdSlot = document.getElementById('conversionAdSlot');
+  if (conversionAdSlot) {
+    // Show the container first so it has dimensions
+    conversionAdSlot.style.display = 'block';
+    
+    // Wait a bit for the container to render, then push ad
+    setTimeout(() => {
+      try {
+        const adsbygoogle = (window as any).adsbygoogle;
+        if (adsbygoogle && adsbygoogle.loaded) {
+          // AdSense is loaded, push the ad
+          adsbygoogle.push({});
+        } else {
+          // AdSense not loaded yet, it will auto-load when script loads
+          (window as any).adsbygoogle = (window as any).adsbygoogle || [];
+        }
+      } catch (e) {
+        console.log('AdSense error (expected if not configured):', e);
+      }
+    }, 100);
+  }
+}
+
+function hideConversionAd() {
+  const conversionAdSlot = document.getElementById('conversionAdSlot');
+  if (conversionAdSlot) {
+    conversionAdSlot.style.display = 'none';
+  }
 }
 
 downloadZipButton.addEventListener('click', async () => {
@@ -235,12 +305,31 @@ downloadZipButton.addEventListener('click', async () => {
     const zip = new JSZip();
 
     for (const file of fileList) {
+      // Decode base64 to binary
       const binaryString = atob(file.data);
       const bytes = new Uint8Array(binaryString.length);
       for (let i = 0; i < binaryString.length; i++) {
         bytes[i] = binaryString.charCodeAt(i);
       }
-      zip.file(file.name, bytes);
+      
+      // Determine MIME type for proper encoding
+      let mimeType = 'application/octet-stream';
+      const extension = file.name.toLowerCase().split('.').pop();
+      switch (extension) {
+        case 'ico':
+          mimeType = 'image/x-icon';
+          break;
+        case 'png':
+          mimeType = 'image/png';
+          break;
+        case 'jpg':
+        case 'jpeg':
+          mimeType = 'image/jpeg';
+          break;
+      }
+      
+      // Add file to ZIP with proper MIME type
+      zip.file(file.name, bytes, { binary: true });
     }
 
     const zipBlob = await zip.generateAsync({ type: 'blob' });

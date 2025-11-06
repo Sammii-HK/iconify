@@ -391,10 +391,35 @@ main {
   }
 }
 
+.ad-slot-conversion {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f8f9ff;
+  border-radius: 8px;
+  border: 2px dashed #667eea;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Hide ads on very small screens */
 @media (max-width: 480px) {
-  .ad-slot {
+  .ad-slot-top,
+  .ad-slot-sidebar {
     display: none;
+  }
+  
+  .ad-slot-conversion {
+    display: block !important; /* Always show conversion ad */
   }
 }
 

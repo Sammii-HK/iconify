@@ -1,9 +1,12 @@
 import sharp from 'sharp';
-import { toIco } from 'to-ico';
+import toIcoPkg from 'to-ico';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import type { ConversionOptions, ConversionResult } from './types.js';
 import { PWA_ICON_SIZES } from './types.js';
+
+// Handle CommonJS module
+const toIco = (toIcoPkg as any).default || toIcoPkg;
 
 /**
  * Validates that the input file is a supported image format
