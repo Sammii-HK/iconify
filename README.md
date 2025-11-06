@@ -61,7 +61,9 @@ npm run start:cli "🚀" --emoji --format pwa --output-dir ./pwa-icons
 
 ### Web App
 
-Start the web server:
+**Live Version:** [https://iconify.dev](https://iconify.dev)
+
+Or run locally:
 
 ```bash
 npm run start:web
@@ -77,6 +79,64 @@ Then open your browser to `http://localhost:3000`
 - Choose output format (ICO, PWA, or both)
 - Configure ICO sizes
 - Download individual files or all as a ZIP archive
+
+### API
+
+**Live API:** `https://iconify.dev/api/convert`
+
+#### Quick Start
+
+**Convert Emoji (GET - Direct Download):**
+```bash
+curl https://iconify.dev/api/favicon?emoji=⭐ -o favicon.ico
+```
+
+**Convert Image/Emoji (POST - JSON Response):**
+```bash
+curl -X POST https://iconify.dev/api/convert \
+  -H "Content-Type: application/json" \
+  -d '{"emoji": "⭐", "format": "ico", "icoSizes": [16, 32, 48]}'
+```
+
+#### Endpoints
+
+1. **`GET /api/favicon?emoji=⭐&size=32`** - Returns ICO file directly (binary)
+2. **`POST /api/convert`** - Returns JSON with base64-encoded files
+
+#### Request Format
+
+```json
+{
+  "imageData": "data:image/png;base64,...",  // For images (optional)
+  "emoji": "⭐",                               // For emojis (optional)
+  "format": "ico",                            // "ico", "pwa", or "both"
+  "icoSizes": [16, 32, 48]                    // Optional, default: [16, 32, 48]
+}
+```
+
+#### Response Format
+
+```json
+{
+  "files": {
+    "favicon.ico": "base64-encoded-data...",
+    "icon-16x16.png": "base64-encoded-data...",
+    // ... more files
+  }
+}
+```
+
+#### Using the Scripts
+
+```bash
+# Convert image file (saves to ./public by default)
+node scripts/convert-image-simple.js logo.png --format both
+
+# Convert emoji
+node scripts/convert-image-simple.js --emoji ⭐ --format ico
+```
+
+**See `API_USAGE.md` for detailed examples in multiple languages.**
 
 ## Project Structure
 

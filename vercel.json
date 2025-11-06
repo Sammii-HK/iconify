@@ -7,6 +7,10 @@
       "destination": "/api/convert"
     },
     {
+      "source": "/api/favicon",
+      "destination": "/api/favicon"
+    },
+    {
       "source": "/api/og-image",
       "destination": "/api/og-image"
     },

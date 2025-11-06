@@ -19,7 +19,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    // Parse body if it's a string
+    // Parse body - supports both JSON and base64 image data
     let body = req.body;
     if (typeof body === 'string') {
       try {
