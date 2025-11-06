@@ -55,6 +55,11 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
     return;
   }
 
+  if (url.pathname === '/favicon.ico') {
+    await serveFile(res, join(__dirname, 'favicon.ico'), 'image/x-icon');
+    return;
+  }
+
   // API endpoint for conversion
   if (url.pathname === '/api/convert' && req.method === 'POST') {
     try {

@@ -91,19 +91,69 @@ async function renderEmojiToImage(
   outputPath: string,
   size: number = 512
 ): Promise<void> {
-  // Create SVG with emoji centered
-  const svg = `
-    <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="${size}" height="${size}" fill="transparent"/>
-      <text x="50%" y="50%" font-size="${size * 0.7}" text-anchor="middle" dominant-baseline="central" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif">${emoji}</text>
-    </svg>
-  `;
-
-  // Convert SVG to PNG using Sharp
-  await sharp(Buffer.from(svg))
-    .resize(size, size)
-    .png()
-    .toFile(outputPath);
+  try {
+    // Use Twemoji CDN to get proper emoji SVG with colors
+    // This ensures we get color emojis regardless of server font availability
+    
+    // Get the Unicode code point for the emoji
+    const codePoint = emoji.codePointAt(0)?.toString(16);
+    if (!codePoint) {
+      throw new Error('Invalid emoji');
+    }
+    
+    // Twemoji CDN URL format: https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/{codePoint}.svg
+    const twemojiUrl = `https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/${codePoint}.svg`;
+    
+    // Use Node.js https/http to fetch (fetch might not be available in older Node versions)
+    const https = await import('https');
+    const http = await import('http');
+    const urlModule = await import('url');
+    
+    const parsedUrl = urlModule.parse(twemojiUrl);
+    const client = parsedUrl.protocol === 'https:' ? https : http;
+    
+    // Fetch the SVG from Twemoji CDN
+    const svgText = await new Promise<string>((resolve, reject) => {
+      const req = client.get(twemojiUrl, (res) => {
+        if (res.statusCode !== 200) {
+          reject(new Error(`Failed to fetch emoji: ${res.statusCode}`));
+          return;
+        }
+        
+        let data = '';
+        res.on('data', (chunk) => {
+          data += chunk.toString();
+        });
+        res.on('end', () => {
+          resolve(data);
+        });
+      });
+      
+      req.on('error', reject);
+      req.setTimeout(5000, () => {
+        req.destroy();
+        reject(new Error('Request timeout'));
+      });
+    });
+    
+    // Convert SVG to PNG with Sharp - maintain transparent background
+    await sharp(Buffer.from(svgText, 'utf8'))
+      .resize(size, size, {
+        fit: 'contain',
+        background: { r: 0, g: 0, b: 0, alpha: 0 }
+      })
+      .png({ 
+        quality: 100,
+        compressionLevel: 9,
+        adaptiveFiltering: true
+      })
+      .toFile(outputPath);
+      
+  } catch (error) {
+    // If Twemoji fails, log and throw - we want to know about failures
+    console.error('Emoji rendering error:', error);
+    throw new Error(`Failed to render emoji: ${error instanceof Error ? error.message : String(error)}`);
+  }
 }
 
 /**

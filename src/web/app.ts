@@ -311,21 +311,13 @@ downloadZipButton.addEventListener('click', async () => {
         base64Data = base64Data.split(',')[1];
       }
       
-      // Decode base64 to binary properly
-      try {
-        const binaryString = atob(base64Data);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
-        
-        // Add file to ZIP as binary
-        zip.file(file.name, bytes);
-      } catch (e) {
-        console.error(`Error processing ${file.name}:`, e);
-        // Fallback: try adding as base64 string
-        zip.file(file.name, base64Data, { base64: true });
-      }
+      // Ensure base64 string is clean (no whitespace, proper padding)
+      base64Data = base64Data.trim();
+      
+      // JSZip can handle base64 directly - this is more reliable
+      // The base64 option tells JSZip to decode the base64 string
+      // For binary files (PNG, ICO), this should work correctly
+      zip.file(file.name, base64Data, { base64: true, binary: true });
     }
 
     const zipBlob = await zip.generateAsync({ type: 'blob' });

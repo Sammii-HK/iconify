@@ -85,17 +85,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     
     if (result.icoPath) {
       const icoBuffer = await readFile(result.icoPath);
+      // Ensure base64 encoding is correct - Buffer.toString('base64') handles binary correctly
       files['favicon.ico'] = icoBuffer.toString('base64');
     }
 
-      if (result.pwaPaths) {
-        const { sep } = await import('path');
-        for (const pwaPath of result.pwaPaths) {
-          const fileName = pwaPath.split(sep).pop() || '';
-          const pwaBuffer = await readFile(pwaPath);
-          files[fileName] = pwaBuffer.toString('base64');
-        }
+    if (result.pwaPaths) {
+      const { sep } = await import('path');
+      for (const pwaPath of result.pwaPaths) {
+        const fileName = pwaPath.split(sep).pop() || '';
+        const pwaBuffer = await readFile(pwaPath);
+        // Ensure base64 encoding is correct for binary PNG data
+        files[fileName] = pwaBuffer.toString('base64');
       }
+    }
 
     // Cleanup
     await rm(tempDir, { recursive: true, force: true });

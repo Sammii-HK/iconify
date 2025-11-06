@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "tsc && npm run copy-static",
-    "copy-static": "node -e \"const fs=require('fs');const path=require('path');fs.mkdirSync('dist/web',{recursive:true});fs.mkdirSync('dist',{recursive:true});fs.copyFileSync('src/web/index.html','dist/web/index.html');fs.copyFileSync('src/web/styles.css','dist/web/styles.css');if(fs.existsSync('public/robots.txt'))fs.copyFileSync('public/robots.txt','dist/robots.txt');if(fs.existsSync('public/sitemap.xml'))fs.copyFileSync('public/sitemap.xml','dist/sitemap.xml');\"",
+    "copy-static": "node -e \"const fs=require('fs');const path=require('path');fs.mkdirSync('dist/web',{recursive:true});fs.mkdirSync('dist',{recursive:true});fs.copyFileSync('src/web/index.html','dist/web/index.html');fs.copyFileSync('src/web/styles.css','dist/web/styles.css');if(fs.existsSync('public/robots.txt'))fs.copyFileSync('public/robots.txt','dist/web/robots.txt');if(fs.existsSync('public/sitemap.xml'))fs.copyFileSync('public/sitemap.xml','dist/web/sitemap.xml');if(fs.existsSync('public/favicon.ico'))fs.copyFileSync('public/favicon.ico','dist/web/favicon.ico');\"",
     "dev": "tsc --watch",
     "start": "node dist/web/server.js",
     "start:cli": "node dist/cli/index.js",
@@ -27,10 +27,13 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@vercel/og": "^0.8.5",
+    "canvas": "^3.2.0",
     "commander": "^11.1.0",
     "jszip": "^3.10.1",
     "sharp": "^0.33.2",
-    "to-ico": "^1.1.5"
+    "to-ico": "^1.1.5",
+    "twemoji": "^14.0.2"
   },
   "devDependencies": {
     "@types/jszip": "^3.4.1",
